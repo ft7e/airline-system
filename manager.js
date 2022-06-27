@@ -1,19 +1,26 @@
 'use strict';
-const eventEmitter = require('./module/events-pool');
+require('dotenv').config();
+
+const io = require('socket.io-client');
+const host = `http://localhost:${process.env.PORT}`;
 const { faker } = require('@faker-js/faker');
 
-require('./module/pilot');
-require('./module/system');
 let ID = faker.datatype.uuid();
 let pilot = faker.internet.userName();
 
-setInterval(() => {
-  let InformationNewFlight = `New Flight Number:${ID}`;
-  console.log(InformationNewFlight);
-  eventEmitter.emit('new-flight', InformationNewFlight);
-}, 5000);
+const events_airline = io.connect(`${host}/airline`);
+const events = io.connect(host);
 
-eventEmitter.on('Arrived', manager2);
+setInterval(() => {
+  let manager1 = `Manager: new flight with ID ${ID} have been scheduled`;
+  console.log(manager1);
+  events_airline.emit('new-flight');
+  events.emit('new-flight');
+}, 10000);
+
+events.on('Arrived', manager2);
 function manager2() {
-  console.log(`We are arriving with Pilot ${pilot}`);
+  console.log(
+    `Manager: we are greatly thankful for the amazing flight, ${pilot}`
+  );
 }
