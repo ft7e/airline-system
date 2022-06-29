@@ -3,7 +3,7 @@
 
 ## PR 
 
-[PR](https://github.com/ft7e/airline-system/pull/2)
+[PR](https://github.com/ft7e/airline-system/pull/3)
 
 ## UML
 
