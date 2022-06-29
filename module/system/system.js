@@ -4,68 +4,70 @@ const PORT = process.env.PORT || 3010;
 const ioServer = require('socket.io')(PORT);
 const { faker } = require('@faker-js/faker');
 
-const tookOff = ioServer.of('/airline');
+const airline = 'British Airlines';
+const flightId = faker.datatype.uuid();
+const pilotName = faker.name.findName();
+const destination = faker.address.cityName();
 
-tookOff.on('connection', (socket) => {
-  socket.on('new-flight', () => {
-    tookOff.emit('new-flight');
-  });
-  socket.on('took-off', flightDetails2);
+const airlinePath = ioServer.of('/airline');
+airlinePath.on('connection', (socket) => {
+  console.log(`connection established to airline ${socket.id}`);
 });
-
 ioServer.on('connection', (socket) => {
+  console.log('connection established to main', socket.id);
   socket.on('new-flight', () => {
-    flightDetails1();
-    ioServer.emit('new-flight');
+    newFlight();
+    airlinePath.emit('new-flight');
   });
-  socket.on('Arrived', flightDetails3);
-  socket.on('Arrived', () => {
-    ioServer.emit('Arrived');
+  socket.on('took-off', tookoffAlert);
+  socket.on('arrived', () => {
+    arriveAlert();
+    airlinePath.emit('arrived', pilotName);
   });
 });
 
-function flightDetails1() {
-  let flightDetails01 = {
+function newFlight() {
+  let newFlight = {
     Flight: {
       event: 'new-flight',
       time: faker.date.past(),
       Details: {
-        airLine: 'British Airlines',
-        destination: faker.address.city(),
-        pilot: faker.internet.userName(),
-        flightID: faker.datatype.uuid(),
+        airLine: airline,
+        flightID: flightId,
+        pilot: pilotName,
+        destination: destination,
       },
     },
   };
-  console.log(flightDetails01);
+  console.log(newFlight);
 }
-function flightDetails2() {
-  let flightDetails02 = {
+function tookoffAlert() {
+  let newFlight = {
     Flight: {
       event: 'took_off',
       time: faker.date.past(),
       Details: {
-        airLine: 'British Airlines',
-        destination: faker.address.city(),
-        pilot: faker.internet.userName(),
-        flightID: faker.datatype.uuid(),
+        airLine: airline,
+        flightID: flightId,
+        pilot: pilotName,
+        destination: destination,
       },
     },
   };
-  console.log(flightDetails02);
+  console.log(newFlight);
 }
-function flightDetails3() {
-  let flightDetails03 = {
+function arriveAlert() {
+  let newFlight = {
     Flight: {
       event: 'arrived',
       time: faker.date.past(),
       Details: {
-        airLine: 'British Airlines',
-        destination: faker.address.city(),
-        pilot: faker.internet.userName(),
-        flightID: faker.datatype.uuid(),
+        airLine: airline,
+        flightID: flightId,
+        pilot: pilotName,
+        destination: destination,
       },
     },
   };
-  console.log(flightDetails03);
+  console.log(newFlight);
 }
